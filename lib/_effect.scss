@@ -1,0 +1,104 @@
+/* =========================================================
+   Motion Tokens
+   ========================================================= */
+
+$fx-fast: 150ms !default;
+$fx-normal: 300ms !default;
+$fx-slow: 600ms !default;
+
+$fx-ease: cubic-bezier(.4, 0, .2, 1) !default;
+
+
+/* =========================================================
+   Core Animation Mixin
+   ========================================================= */
+
+@mixin animate($props..., $duration: $fx-normal) {
+  transition-property: $props;
+  transition-duration: $duration;
+  transition-timing-function: $fx-ease;
+}
+
+
+/* =========================================================
+   Elevation System
+   ========================================================= */
+
+$fx-elevations: (
+  1: 0 1px 3px rgba(0,0,0,.12),
+  2: 0 4px 10px rgba(0,0,0,.15),
+  3: 0 10px 30px rgba(0,0,0,.2)
+);
+
+@each $level, $shadow in $fx-elevations {
+  .fx-elevation-#{$level} {
+    box-shadow: $shadow;
+  }
+}
+
+
+/* =========================================================
+   Hover Effects (Opt-in Utilities)
+   ========================================================= */
+
+.fx-lift {
+  transform: translateY(0);
+  @include animate(transform, box-shadow);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: map-get($fx-elevations, 3);
+  }
+}
+
+.fx-scale {
+  transform: scale(1);
+  @include animate(transform);
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.fx-fade-hover {
+  @include animate(opacity);
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+
+/* =========================================================
+   Keyframe Animations
+   ========================================================= */
+
+@keyframes fx-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fx-fade-up {
+  animation: fx-fade-up $fx-normal $fx-ease both;
+}
+
+
+/* =========================================================
+   Reduced Motion (Accessibility)
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-lift,
+  .fx-scale,
+  .fx-fade-hover,
+  .fx-fade-up {
+    animation: none !important;
+    transition: none !important;
+  }
+}
